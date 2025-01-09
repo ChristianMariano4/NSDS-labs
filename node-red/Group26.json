@@ -1,0 +1,318 @@
+[
+    {
+        "id": "8b5e68352b96f21f",
+        "type": "tab",
+        "label": "Group26",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "ebdd0f04185f4b63",
+        "type": "debug",
+        "z": "8b5e68352b96f21f",
+        "name": "debug 1",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1060,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "08a48b3e2e3dcf09",
+        "type": "mqtt in",
+        "z": "8b5e68352b96f21f",
+        "name": "GetTemperature",
+        "topic": "neslabpolimi/smartcity/milan",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "7009a70a922e118c",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 340,
+        "y": 240,
+        "wires": [
+            [
+                "05c7eabf8bbda61d",
+                "545b7b43a9369eb5"
+            ]
+        ]
+    },
+    {
+        "id": "05c7eabf8bbda61d",
+        "type": "function",
+        "z": "8b5e68352b96f21f",
+        "name": "ComputeAverage",
+        "func": "let temperature = msg.payload.fields.temperature;\nlet queue = context.get(\"queue\");\nif (temperature!=undefined){\n    queue.push(temperature);\n    if(queue.length > 10)\n        queue.shift();\n    let avg = queue.reduce((a, b)=>a+b)/queue.length;\n    let Newmsg = {\n        topic: msg.topic,\n        payload: avg,\n        _msgid: msg._msgid\n    }\n    context.set(\"queue\", queue);\n    flow.set(\"avg\", avg);\n    return Newmsg;\n}\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\ncontext.set (\"queue\", []);\nflow.set (\"avg\", undefined);",
+        "finalize": "",
+        "libs": [],
+        "x": 810,
+        "y": 240,
+        "wires": [
+            [
+                "ebdd0f04185f4b63"
+            ]
+        ]
+    },
+    {
+        "id": "545b7b43a9369eb5",
+        "type": "debug",
+        "z": "8b5e68352b96f21f",
+        "name": "debug 2",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 640,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "8784b3b45a3ab0d5",
+        "type": "openweathermap",
+        "z": "8b5e68352b96f21f",
+        "name": "OpenWeatherMilan",
+        "wtype": "current",
+        "lon": "",
+        "lat": "",
+        "city": "Milan",
+        "country": "IT",
+        "language": "en",
+        "x": 610,
+        "y": 620,
+        "wires": [
+            [
+                "f87c1e27d601e68d",
+                "b26f3dd7861e1d9e"
+            ]
+        ]
+    },
+    {
+        "id": "57c1938011160a9a",
+        "type": "inject",
+        "z": "8b5e68352b96f21f",
+        "name": "TriggerOneMin",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 340,
+        "y": 620,
+        "wires": [
+            [
+                "8784b3b45a3ab0d5"
+            ]
+        ]
+    },
+    {
+        "id": "b60acb36e31ba3d9",
+        "type": "mqtt in",
+        "z": "8b5e68352b96f21f",
+        "name": "GetK",
+        "topic": "neslabpolimi/nsds/eval24/k",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "7009a70a922e118c",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 310,
+        "y": 460,
+        "wires": [
+            [
+                "69341ed76e5fa7a3"
+            ]
+        ]
+    },
+    {
+        "id": "f87c1e27d601e68d",
+        "type": "debug",
+        "z": "8b5e68352b96f21f",
+        "name": "debug 3",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1060,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "3c075a4e44b4c5e5",
+        "type": "debug",
+        "z": "8b5e68352b96f21f",
+        "name": "debug 4",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1160,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "b26f3dd7861e1d9e",
+        "type": "function",
+        "z": "8b5e68352b96f21f",
+        "name": "Compare",
+        "func": "let avg = flow.get(\"avg\");\nlet k = flow.get(\"k\");\nlet temperature = msg.payload.tempk;\nif (k!=undefined && avg!=undefined){\n    if (Math.abs(avg-temperature)> k){\n        let NewMsg = {\n            topic : \"neslabpolimi/nsds/eval24/alarm\",\n            payload: \"Temperature data is not coherent!\",\n            _msgid: msg._msgid\n        };\n        return NewMsg;\n    }\n}",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 800,
+        "y": 760,
+        "wires": [
+            [
+                "3c075a4e44b4c5e5",
+                "8f0c759b6ceff0ba"
+            ]
+        ]
+    },
+    {
+        "id": "69341ed76e5fa7a3",
+        "type": "function",
+        "z": "8b5e68352b96f21f",
+        "name": "KUpgrade",
+        "func": "let newk = msg.payload;\nflow.set('k', newk);\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\nflow.set('k', undefined);",
+        "finalize": "",
+        "libs": [],
+        "x": 600,
+        "y": 460,
+        "wires": [
+            [
+                "25c0421e92d0670c"
+            ]
+        ]
+    },
+    {
+        "id": "25c0421e92d0670c",
+        "type": "debug",
+        "z": "8b5e68352b96f21f",
+        "name": "debug 5",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 840,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "8f0c759b6ceff0ba",
+        "type": "mqtt out",
+        "z": "8b5e68352b96f21f",
+        "name": "PublishAlarm",
+        "topic": "neslabpolimi/nsds/eval24/alarm",
+        "qos": "2",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "7009a70a922e118c",
+        "x": 1110,
+        "y": 780,
+        "wires": []
+    },
+    {
+        "id": "2576786469dee6c1",
+        "type": "comment",
+        "z": "8b5e68352b96f21f",
+        "name": "Flow1",
+        "info": "",
+        "x": 170,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "6c44603cd76f8a2b",
+        "type": "comment",
+        "z": "8b5e68352b96f21f",
+        "name": "Flow3",
+        "info": "",
+        "x": 170,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "672813fe161f0c53",
+        "type": "comment",
+        "z": "8b5e68352b96f21f",
+        "name": "Flow 2",
+        "info": "",
+        "x": 170,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "7009a70a922e118c",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "mqtt.neslab.it",
+        "port": "3200",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "compatmode": false,
+        "protocolVersion": 4,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": ""
+    }
+]
