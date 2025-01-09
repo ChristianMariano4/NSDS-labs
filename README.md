@@ -31,7 +31,7 @@ This repository contains six projects developed for the *Networked Software for 
 
 6. **Contiki-NG Project**  
    **Topic**: IoT and embedded systems  
-   **Technologies**: Contiki-NG, C
+   **Technologies**: Contiki-NG, C \
    **Description**: Implements a simple RPL network monitor to track and update the status of UDP clients and their parents in a dynamic RPL tree.
 
 ## Course Information
