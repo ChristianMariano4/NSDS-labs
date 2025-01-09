@@ -21,7 +21,7 @@ import java.util.*;
 // Number of partitions for outputTopic1 (min, max): (1, n)
 // Number of partitions for outputTopic2 (min, max): (1, n)
 
-// Number of instances of Consumer1 (and groupId of each instance) (min, max): (1, n) groupId: GroupA
+// Number of instances of Consumer1 (and groupId of each instance) (min, max): (1, 1) groupId: GroupA
 // Number of instances of Consumer2 (and groupId of each instance) (min, max): (1, n) groupId: GroupB
 
 // Please, specify below any relation between the number of partitions for the topics
