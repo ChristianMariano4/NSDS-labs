@@ -14,23 +14,27 @@ public class KeepAway {
 		
 		final ActorSystem sys = ActorSystem.create("System");
 
-//		ActorRef a = sys.actorOf(BallPasserActor.props(), "a");
-//		ActorRef b = sys.actorOf(BallPasserActor.props(), "b");
-//		ActorRef c = sys.actorOf(BallPasserActor.props(), "c");
-//		ActorRef d = sys.actorOf(BallPasserActor.props(), "d");
+		ActorRef a = sys.actorOf(BallPasserActor.props(), "a");
+		ActorRef b = sys.actorOf(BallPasserActor.props(), "b");
+		ActorRef c = sys.actorOf(BallPasserActor.props(), "c");
+		ActorRef d = sys.actorOf(BallPasserActor.props(), "d");
 
-//		...
+        //every node knows who is the next one. We can instantiate here
+        a.tell(new ConfigMsg(b, d, W, R), ActorRef.noSender());
+        b.tell(new ConfigMsg(c, a, W, R), ActorRef.noSender());
+        c.tell(new ConfigMsg(d, b, W, R), ActorRef.noSender());
+        d.tell(new ConfigMsg(a, c, W, R), ActorRef.noSender());
 		
 		// Wait until system is ready
 		try {
-			TimeUnit.SECONDS.sleep(1);
+			TimeUnit.SECONDS.sleep(5);
 		} catch (InterruptedException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
 		// A sends a ball clockwise, it receives it back and drops it
-		// ...
+		// a.tell(new BallMsg(BallMsg.CLOCKWISE, W, R, ActorRef.noSender()), ActorRef.noSender());
 		
 		// Wait until system is ready
 		try {
@@ -41,7 +45,8 @@ public class KeepAway {
 		}
 
 		// B sends a ball counterclockwise, it receives it back and drops it
-		// ...
+		// b.tell(new BallMsg(BallMsg.COUNTERCLOCKWISE, W, R, ActorRef.noSender()), ActorRef.noSender());
+		
 
 		// Wait until system is ready
 		try {
@@ -52,7 +57,7 @@ public class KeepAway {
 		}
 
 		// C sends a ball counterclockwise, the ball gets to D that is put to rest
-		// ...
+		c.tell(new BallMsg(BallMsg.COUNTERCLOCKWISE, ActorRef.noSender()), ActorRef.noSender());
 		
 		// Wait until system is ready
 		try {
@@ -62,14 +67,20 @@ public class KeepAway {
 			e1.printStackTrace();
 		}
 
-		// D sends a ball clockwise, but it's resting 
-		// ...
+		// // D sends a ball clockwise, but it's resting 
+        d.tell(new BallMsg(BallMsg.CLOCKWISE, ActorRef.noSender()), ActorRef.noSender());
+
 		
-		// D sends another ball clockwise, it's now to R balls while resting and resumes
-		// ...
+		// // D sends another ball clockwise, it's now to R balls while resting and resumes
+        d.tell(new BallMsg(BallMsg.CLOCKWISE, ActorRef.noSender()), ActorRef.noSender());
+		
 		
 		// C gets back its own ball and drops it
 		// D eventually gets two balls back and drops them, no other player is put to rest
+        c.tell(new BallMsg(BallMsg.COUNTERCLOCKWISE, ActorRef.noSender()), ActorRef.noSender());
+        d.tell(new BallMsg(BallMsg.COUNTERCLOCKWISE, ActorRef.noSender()), ActorRef.noSender());
+        d.tell(new BallMsg(BallMsg.COUNTERCLOCKWISE, ActorRef.noSender()), ActorRef.noSender());
+        
 		
 		// Wait until system is ready again
 		try {
